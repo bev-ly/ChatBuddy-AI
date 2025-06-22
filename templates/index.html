@@ -1,67 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>ChatBuddy AI</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8" />
+  <title>ChatBuddy</title>
+  <link rel="stylesheet" href="/static/style.css" />
 </head>
-<body>
+<body class="dark">
   <div class="container">
-    <header>
-      <h1>🤖 ChatBuddy AI</h1>
-      <p>Your smart learning assistant</p>
-      <button id="dark-mode-toggle">🌙 Dark Mode</button>
-    </header>
-
-    <div class="chat-box" id="chat-box"></div>
+    <h1>🤖 ChatBuddy</h1>
+    <div class="chat-box" id="chat-box">
+      {% for entry in history %}
+        <div class="message user"><strong>You:</strong> <p>{{ entry.user }}</p></div>
+        <div class="message bot"><strong>ChatBuddy:</strong> <p>{{ entry.bot }}</p></div>
+      {% endfor %}
+    </div>
 
     <form id="chat-form">
       <input type="text" id="user-input" placeholder="Type a message..." autocomplete="off" required />
       <button type="submit">Send</button>
+      <button type="button" id="mic-btn">🎤</button>
+      <button type="button" id="clear-btn">🧹</button>
     </form>
   </div>
 
-  <script>
-    const form = document.getElementById("chat-form");
-    const input = document.getElementById("user-input");
-    const chatBox = document.getElementById("chat-box");
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const userMsg = input.value.trim();
-      if (!userMsg) return;
-
-      appendMessage("You", userMsg, "user");
-      input.value = "";
-
-      const res = await fetch("/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMsg })
-      });
-
-      const data = await res.json();
-      appendMessage("ChatBuddy", data.reply, "bot");
-    });
-
-    function appendMessage(sender, text, type) {
-      const message = document.createElement("div");
-      message.classList.add("message", type);
-      message.innerHTML = `<strong>${sender}:</strong><p>${text}</p>`;
-      chatBox.appendChild(message);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    // Dark mode toggle
-    const toggleBtn = document.getElementById("dark-mode-toggle");
-    toggleBtn.onclick = () => {
-      document.body.classList.toggle("dark");
-      localStorage.setItem("dark-mode", document.body.classList.contains("dark"));
-    };
-
-    if (localStorage.getItem("dark-mode") === "true") {
-      document.body.classList.add("dark");
-    }
-  </script>
+  <script src="/static/script.js"></script>
 </body>
 </html>
